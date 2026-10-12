@@ -1,0 +1,174 @@
+:root {
+  --paper: #f5f4ef;
+  --ink: #11110f;
+  --page-pad: clamp(18px, 4vw, 56px);
+  --memory-opacity: 0;
+  --memory-scale: 0.92;
+}
+
+* { box-sizing: border-box; }
+
+html { background: var(--paper); }
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse at 48% 56%, rgba(248, 236, 208, 0.26), rgba(245, 244, 239, 0) 44%),
+    var(--paper);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: -12vmax;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--memory-opacity);
+  transform: scale(var(--memory-scale)) rotate(-2deg);
+  transform-origin: 48% 54%;
+  background:
+    radial-gradient(ellipse at 26% 64%, rgba(116, 203, 163, 0.22) 0%, rgba(116, 203, 163, 0.11) 10%, rgba(116, 203, 163, 0) 30%),
+    radial-gradient(ellipse at 67% 34%, rgba(235, 135, 154, 0.18) 0%, rgba(235, 135, 154, 0.09) 11%, rgba(235, 135, 154, 0) 29%),
+    radial-gradient(ellipse at 76% 70%, rgba(106, 154, 220, 0.18) 0%, rgba(106, 154, 220, 0.08) 12%, rgba(106, 154, 220, 0) 30%),
+    radial-gradient(ellipse at 44% 48%, rgba(243, 214, 132, 0.22) 0%, rgba(243, 214, 132, 0.10) 13%, rgba(243, 214, 132, 0) 34%),
+    linear-gradient(114deg, rgba(255,255,255,0) 21%, rgba(152, 207, 183, 0.08) 36%, rgba(255,255,255,0) 47%, rgba(195, 151, 214, 0.07) 61%, rgba(255,255,255,0) 76%);
+  filter: blur(48px) saturate(0.72);
+  mix-blend-mode: multiply;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: calc(var(--memory-opacity) * 0.16);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.8'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  mix-blend-mode: multiply;
+}
+
+main,
+.poem-stage,
+.poem {
+  position: relative;
+  z-index: 1;
+}
+
+.poem-track {
+  height: 510vh;
+  position: relative;
+}
+
+.poem-stage {
+  position: sticky;
+  top: 0;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 4svh var(--page-pad);
+  overflow: hidden;
+}
+
+.poem {
+  width: min(980px, 100%);
+}
+
+.poem-title {
+  margin: 0 0 clamp(18px, 3vh, 34px);
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.poem-row {
+  --x: 0px;
+  --alpha: .17;
+  display: grid;
+  grid-template-columns: clamp(78px, 12vw, 135px) 1fr;
+  column-gap: clamp(3px, .45vw, 8px);
+  align-items: baseline;
+  min-height: clamp(24px, 3vh, 34px);
+  font-size: clamp(15px, 1.65vw, 22px);
+  line-height: 1.03;
+  letter-spacing: -0.035em;
+  opacity: var(--alpha);
+}
+
+.anchor,
+.trail {
+  white-space: nowrap;
+}
+
+.anchor { justify-self: end; }
+
+.trail {
+  transform: translate3d(var(--x), 0, 0);
+  will-change: transform;
+  position: relative;
+}
+
+.continuation {
+  margin-top: -3px;
+  margin-bottom: clamp(3px, .8vh, 9px);
+}
+
+.poem-row--pause { margin-top: clamp(5px, 1vh, 12px); }
+.poem-row--return { margin-top: clamp(9px, 1.7vh, 20px); font-weight: 700; }
+.poem-row--final { margin-top: clamp(12px, 2.1vh, 24px); font-weight: 700; }
+
+.poem-row,
+.trail { transition: none; }
+
+.poem-row.is-typing .trail::after {
+  content: "";
+  display: inline-block;
+  width: 0.08em;
+  height: 0.9em;
+  margin-left: 0.12em;
+  background: currentColor;
+  vertical-align: -0.06em;
+  animation: caret-blink 520ms steps(1, end) infinite;
+}
+
+@keyframes caret-blink {
+  0%, 46% { opacity: 1; }
+  47%, 100% { opacity: 0; }
+}
+
+@media (max-width: 700px) {
+  .poem-track { height: 490vh; }
+  .poem-stage { padding-inline: 14px; }
+
+  .poem-row {
+    grid-template-columns: 66px minmax(0, 1fr);
+    column-gap: 3px;
+    min-height: 23px;
+    font-size: clamp(12px, 3.55vw, 16px);
+  }
+
+  .anchor,
+  .trail { white-space: normal; }
+  .anchor { text-align: right; }
+}
+
+@media (max-height: 700px) and (min-width: 701px) {
+  .poem-row { min-height: 23px; font-size: clamp(14px, 1.4vw, 18px); }
+  .poem-title { margin-bottom: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poem-track { height: auto; }
+  .poem-stage { position: static; min-height: 100vh; }
+  .poem-row { --alpha: 1 !important; }
+  .trail { transform: none !important; }
+  .poem-row .trail::after { display: none !important; }
+  body::before { opacity: 0.08; transform: none; }
+  body::after { opacity: 0.015; }
+}
